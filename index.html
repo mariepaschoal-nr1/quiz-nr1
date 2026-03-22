@@ -692,13 +692,13 @@
     <div class="quiz-footer">
       Resultado gerado por <strong>Mari Paschoal</strong> · Consultora em Saúde Mental & NR-1<br>
       <a href="https://www.linkedin.com/in/mari-paschoal-neuro-nr1/" target="_blank">LinkedIn</a> ·
-      <a href="mailto:mariepaschoal@gmail.com">mariepaschoal@gmail.com</a>
+      <a href="/cdn-cgi/l/email-protection#335e52415a56435240505b5c525f73545e525a5f1d505c5e"><span class="__cf_email__" data-cfemail="d2bfb3a0bbb7a2b3a1b1babdb3be92b5bfb3bbbefcb1bdbf">[email&#160;protected]</span></a>
     </div>
   </div>
 
 </div><!-- /container -->
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const perguntas = [
   {
     texto: "Com que frequência os colaboradores relatam sobrecarga de trabalho ou esgotamento?",
@@ -777,6 +777,25 @@ const perguntas = [
 let respostas = [];
 let questaoAtual = 0;
 let nomeUsuario = '';
+let dadosLead = {};
+
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzewvMCAojETT7OtnEUTfKM0fRje8z6MmcrAOinI5_6F5UIkch-GFFeu0Y2fzOPSQlo/exec';
+
+function enviarParaSheets(nivel, pontuacao) {
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      nome: dadosLead.nome,
+      email: dadosLead.email,
+      whatsapp: dadosLead.whatsapp,
+      cargo: dadosLead.cargo,
+      pontuacao: pontuacao,
+      nivel: nivel
+    })
+  }).catch(() => {});
+}
 
 function goTo(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -795,6 +814,7 @@ function iniciarQuiz() {
   }
 
   nomeUsuario = nome.split(' ')[0];
+  dadosLead = { nome, email, whatsapp: document.getElementById('input-whats').value.trim(), cargo };
   respostas = [];
   questaoAtual = 0;
   goTo('screen-quiz');
@@ -910,6 +930,8 @@ function mostrarResultado() {
   document.getElementById('score-ring').className = `score-ring ${ringClass}`;
   document.getElementById('score-number').textContent = total;
 
+  enviarParaSheets(nivel, total);
+
   const pontosDiv = document.getElementById('result-points');
   pontosDiv.innerHTML = `<div class="result-points-title">O que o seu resultado indica</div>`;
   pontos.forEach(p => {
@@ -921,17 +943,4 @@ function mostrarResultado() {
     `;
   });
 
-  document.getElementById('cta-title').textContent = ctaTitulo;
-  document.getElementById('cta-sub').textContent = ctaSub;
-
-  goTo('screen-result');
-}
-
-function reiniciar() {
-  respostas = [];
-  questaoAtual = 0;
-  goTo('screen-intro');
-}
-</script>
-</body>
-</html>
+  document.get
